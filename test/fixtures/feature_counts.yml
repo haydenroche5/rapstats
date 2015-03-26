@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  count: 1
+  parent_artist_id: 
+  featured_artist_id: 
+
+two:
+  count: 1
+  parent_artist_id: 
+  featured_artist_id: 
