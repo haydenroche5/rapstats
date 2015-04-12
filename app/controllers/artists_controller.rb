@@ -20,19 +20,21 @@ class ArtistsController < ApplicationController
       songs = RapGenius.search_by_artist(name)
       rs_name = name.downcase.gsub(/[$]/, 's')
       rs_name = rs_name.gsub(/[^a-z0-9\s]/, '')
-      rg_name = ''
+      rg_name_stripped = ''
       rg_artist = RapGenius::Artist.new
       songs.each do |song|
-        rg_name = song.artist.name.downcase.gsub(/[$]/, 's')
-        rg_name = rg_name.gsub(/[^a-z0-9\s]/, '')
-        if rs_name == rg_name
+        rg_name_stripped = song.artist.name.downcase.gsub(/[$]/, 's')
+        rg_name_stripped = rg_name_stripped.gsub(/[^a-z0-9\s]/, '')
+        if rs_name == rg_name_stripped
           rg_artist = song.artist
           break
         end
       end
       
       if rg_artist.songs != 0
-        rs_artist = Artist.create(:name => rg_name)
+        rs_artist = Artist.new(:name => rg_name_stripped)
+        rs_artist.rg_name = rg_artist.name
+        rs_artist.save()
       end
 
       i = 1;
@@ -42,14 +44,16 @@ class ArtistsController < ApplicationController
           puts song.title
           featured_artists = song.featured_artists
           featured_artists.each do |featured_artist|
-            fa_name = featured_artist.name.downcase.gsub(/[$]/, 's')
-            fa_name = fa_name.gsub(/[^a-z0-9\s]/, '')
-            if fa_name == rs_name
+            fa_name_stripped = featured_artist.name.downcase.gsub(/[$]/, 's')
+            fa_name_stripped = fa_name_stripped.gsub(/[^a-z0-9\s]/, '')
+            if fa_name_stripped == rs_name
               next
             end
-            fa_artist = Artist.where(['name = ?', fa_name]).first
+            fa_artist = Artist.where(['name = ?', fa_name_stripped]).first
             if fa_artist == nil
-              fa_artist = Artist.create(:name => fa_name)
+              fa_artist = Artist.new(:name => fa_name_stripped)
+              fa_artist.rg_name = featured_artist.name
+              fa_artist.save()
             end
             feature_count = FeatureCount.where(:parent_artist_id=>rs_artist.id).where(:featured_artist_id=>fa_artist.id).first
             if feature_count != nil
@@ -72,14 +76,14 @@ class ArtistsController < ApplicationController
     rs_artist.feature_counts.each do |fc|
       fc_hash = Hash.new
       fc_hash['count'] = fc.count
-      parent_artist_name = Artist.where(:id => fc.parent_artist_id).first.name
-      featured_artist_name = Artist.where(:id => fc.featured_artist_id).first.name
+      parent_artist_name = Artist.where(:id => fc.parent_artist_id).first.rg_name
+      featured_artist_name = Artist.where(:id => fc.featured_artist_id).first.rg_name
       fc_hash['parent_artist_name'] = parent_artist_name
       fc_hash['featured_artist_name'] = featured_artist_name
       feature_counts << fc_hash
     end
-    feature_counts.sort_by(&:count)
-    respond_with feature_counts.to_json
+    sorted_feature_counts = feature_counts.sort_by{ |fc| -fc['count'] }
+    respond_with sorted_feature_counts
   end
   
   private

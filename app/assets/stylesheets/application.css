@@ -26,3 +26,13 @@
   height: 30px;
   width: 300px;
 }
+
+.feature-chart div {
+  text-align: center;
+  font: 10px sans-serif;
+  background-color: black;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
