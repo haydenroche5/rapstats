@@ -17,8 +17,6 @@ function($scope, artist) {
       return; 
     }
 
-    console.log($scope.name);
-
     artist.search({
       name: $scope.name
     });

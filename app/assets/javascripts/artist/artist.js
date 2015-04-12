@@ -9,13 +9,11 @@ function($http) {
   };
 
   o.search = function(artist) {
-    console.log('got here');
-    return $http.get('/artists/search/' + artist.name, artist).success(function(data) {
-      console.log('artist created: ' + data);
+    return $http.get('/artists/search/' + artist.name + '.json').success(function(data) {
+      console.log(data)
     }).
     error(function(data) {
       console.log('data in failure')
-      console.log(data)
     });
   };
 

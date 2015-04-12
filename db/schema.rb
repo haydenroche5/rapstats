@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326060959) do
+ActiveRecord::Schema.define(version: 20150411211511) do
 
   create_table "artists", force: true do |t|
     t.string   "name"
@@ -21,13 +21,10 @@ ActiveRecord::Schema.define(version: 20150326060959) do
 
   create_table "feature_counts", force: true do |t|
     t.integer  "count"
-    t.integer  "parent_artist_id"
-    t.integer  "featured_artist_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "parent_artist_id"
+    t.integer  "featured_artist_id"
   end
-
-  add_index "feature_counts", ["featured_artist_id"], name: "index_feature_counts_on_featured_artist_id"
-  add_index "feature_counts", ["parent_artist_id"], name: "index_feature_counts_on_parent_artist_id"
 
 end

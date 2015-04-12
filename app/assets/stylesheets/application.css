@@ -12,3 +12,17 @@
  *= require bootstrap/dist/css/bootstrap
  *= require_tree .
  */
+
+.search-column {
+  text-align: center;
+  padding-top: 50px;
+}
+
+.search-button {
+  height: 30px;
+}
+
+.search-field {
+  height: 30px;
+  width: 300px;
+}
