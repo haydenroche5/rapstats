@@ -27,12 +27,22 @@
   width: 300px;
 }
 
-.feature-chart div {
-  text-align: center;
+.graph-row {
+  padding-top: 50px;
+}
+
+.feature-chart-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 900px;
+}
+
+.feature-chart rect {
+  fill: black;
+}
+
+.feature-chart text {
+  fill: white;
   font: 10px sans-serif;
-  background-color: black;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
+  text-anchor: middle;
 }

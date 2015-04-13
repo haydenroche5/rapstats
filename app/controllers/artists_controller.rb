@@ -83,7 +83,11 @@ class ArtistsController < ApplicationController
       feature_counts << fc_hash
     end
     sorted_feature_counts = feature_counts.sort_by{ |fc| -fc['count'] }
-    respond_with sorted_feature_counts
+    top_thirty = Array.new
+    for i in 0..29
+      top_thirty << sorted_feature_counts[i]
+    end
+    respond_with top_thirty
   end
   
   private
