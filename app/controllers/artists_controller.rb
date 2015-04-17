@@ -16,22 +16,25 @@ class ArtistsController < ApplicationController
     name = params[:name]
     rs_artist = Artist.where(['name = ?', name]).first
 
-    if rs_artist == nil
+    rg_artist = RapGenius::Artist.new
+
+    if rs_artist == nil || rs_artist.feature_counts.length == 0
       songs = RapGenius.search_by_artist(name)
       rs_name = name.downcase.gsub(/[$]/, 's')
+      rs_name = rs_name.gsub(/[-]/, ' ')
       rs_name = rs_name.gsub(/[^a-z0-9\s]/, '')
       rg_name_stripped = ''
-      rg_artist = RapGenius::Artist.new
       songs.each do |song|
         rg_name_stripped = song.artist.name.downcase.gsub(/[$]/, 's')
+        rg_name_stripped = rg_name_stripped.gsub(/[-]/, ' ')
         rg_name_stripped = rg_name_stripped.gsub(/[^a-z0-9\s]/, '')
         if rs_name == rg_name_stripped
           rg_artist = song.artist
           break
         end
       end
-      
-      if rg_artist.songs != 0
+
+      if rs_artist == nil && rg_artist.songs != 0
         rs_artist = Artist.new(:name => rg_name_stripped)
         rs_artist.rg_name = rg_artist.name
         rs_artist.save()
@@ -55,7 +58,7 @@ class ArtistsController < ApplicationController
               fa_artist.rg_name = featured_artist.name
               fa_artist.save()
             end
-            feature_count = FeatureCount.where(:parent_artist_id=>rs_artist.id).where(:featured_artist_id=>fa_artist.id).first
+            feature_count = FeatureCount.where(:parent_artist_id => rs_artist.id).where(:featured_artist_id => fa_artist.id).first
             if feature_count != nil
               feature_count.count = feature_count.count + 1
               feature_count.save()
@@ -72,22 +75,27 @@ class ArtistsController < ApplicationController
         i = i + 1
       end
     end
+
     feature_counts = Array.new
     rs_artist.feature_counts.each do |fc|
       fc_hash = Hash.new
       fc_hash['count'] = fc.count
-      parent_artist_name = Artist.where(:id => fc.parent_artist_id).first.rg_name
       featured_artist_name = Artist.where(:id => fc.featured_artist_id).first.rg_name
-      fc_hash['parent_artist_name'] = parent_artist_name
       fc_hash['featured_artist_name'] = featured_artist_name
       feature_counts << fc_hash
     end
+
     sorted_feature_counts = feature_counts.sort_by{ |fc| -fc['count'] }
     top_thirty = Array.new
     for i in 0..29
       top_thirty << sorted_feature_counts[i]
     end
-    respond_with top_thirty
+
+    parent_artist_hash = Hash.new
+    parent_artist_hash['parent_artist_name'] = rs_artist.rg_name
+    parent_artist_hash['top_thirty'] = top_thirty
+
+    respond_with parent_artist_hash
   end
   
   private
