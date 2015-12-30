@@ -14,15 +14,15 @@ class ArtistsController < ApplicationController
 
   def search
     name = params[:name]
+    rs_name = name.downcase.gsub(/[$]/, 's')
+    rs_name = rs_name.gsub(/[-]/, ' ')
+    rs_name = rs_name.gsub(/[^a-z0-9\s]/, '')
     rs_artist = Artist.where(['name = ?', name]).first
 
     rg_artist = RapGenius::Artist.new
 
     if rs_artist == nil || rs_artist.feature_counts.length == 0
       songs = RapGenius.search_by_artist(name)
-      rs_name = name.downcase.gsub(/[$]/, 's')
-      rs_name = rs_name.gsub(/[-]/, ' ')
-      rs_name = rs_name.gsub(/[^a-z0-9\s]/, '')
       rg_name_stripped = ''
       songs.each do |song|
         rg_name_stripped = song.artist.name.downcase.gsub(/[$]/, 's')
@@ -44,6 +44,7 @@ class ArtistsController < ApplicationController
       while rg_artist.songs(page: i).length != 0 do
         songs = rg_artist.songs(page: i)
         songs.each do |song|
+          # Remove this later
           puts song.title
           featured_artists = song.featured_artists
           featured_artists.each do |featured_artist|
@@ -98,8 +99,4 @@ class ArtistsController < ApplicationController
     respond_with parent_artist_hash
   end
   
-  private
-  def artist_params
-    params.require(:artist).permit(:name)
-  end
 end

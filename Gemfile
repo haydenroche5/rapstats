@@ -24,7 +24,7 @@ gem 'jbuilder', '~> 1.2'
 
 gem 'angular-rails-templates'
 
-gem "rapgenius", "~> 1.0.5"
+gem "rapgenius", "~> 1.1.1"
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

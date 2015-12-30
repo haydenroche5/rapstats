@@ -19,5 +19,6 @@ module Rapstats
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+    RapGenius::Client.access_token = "VYeRqvJ7i887MapgZAS4nM1xQuLuGVzrUf8Z_VmjqqXerXVub-d1xGRCSAdDonPj"
   end
 end
